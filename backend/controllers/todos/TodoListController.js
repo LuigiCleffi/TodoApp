@@ -4,14 +4,11 @@ const router = express.Router()
 const TodoList = require("./TodoList")
 
 
-router.get("/todos", (req, res) => {
-    const {titleList} = req.body
-    if (!titleList) return res.status(400).json({ message: "Title is required" });
-    const slug = slugify(titleList).toLowerCase();
-    return res.json({title: titleList, slug: slug})
+router.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 })
 
-router.post("/newTodo", (req, res) => {
+router.post("/todo/newTodo", (req, res) => {
     const {titleList} = req.body
 
     if(!titleList) return res.status(400).json({message: "Title is required"})
