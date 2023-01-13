@@ -12,5 +12,5 @@ const Todo = connection.define('todos', {
     }
 })
 
-Todo.sync({ force: true });
+// Todo.sync({ force: true });
 module.exports = Todo;

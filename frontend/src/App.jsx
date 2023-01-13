@@ -1,25 +1,28 @@
 import { useState } from "react";
 import "./global.css";
-import axios from "axios";
-function App() {
-  const [todo, setTodo] = useState({
-    title: ''
-  });
+import localApi from "../services/api";
+import { useNavigate } from "react-router-dom";
 
-  const handleSubmit = evt => {
-    evt.preventDefault()
-    axios.post('/newTodo', todo)
-    .then(res => {
-      console.log(res);
-    })
-    .catch(err => {
-      console.log(err);
-    })
-  }
-  function checkData(e) {
-    console.log(todoTitle);
-    return e.preventDefault();
-  }
+function App() {
+  const navigate = useNavigate();
+  const [todo, setTodo] = useState("");
+
+  const handleSubmit = (evt) => {
+    evt.preventDefault();
+
+    localApi
+      .post("/todo/newTodo", JSON.stringify({ todo }))
+      .then((res) => {
+        setTodo("");
+        console.log(res);
+        navigate("/todos");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    console.log(todo);
+  };
+
   return (
     <div className="App align-items-center my-3">
       <div className="container">
@@ -36,13 +39,10 @@ function App() {
                   type="text"
                   placeholder="List Title"
                   className="form-control"
-                  value={todo.title}
-                  onChange={(e) => setTodo(e.target.value).title}
+                  value={todo}
+                  onChange={(event) => setTodo(event.target.value)}
                 />
-                <button
-                  type="submit"
-                  className="btn btn-dark mx-2"
-                >
+                <button type="submit" className="btn btn-dark mx-2">
                   Save
                 </button>
               </form>

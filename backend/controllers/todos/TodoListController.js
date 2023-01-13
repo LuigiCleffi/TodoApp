@@ -4,23 +4,41 @@ const router = express.Router()
 const TodoList = require("./TodoList")
 
 
-router.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+router.get("/todos", (req, res) => {
+    try{
+        TodoList.findAll({
+            order: [["title", "ASC"]]
+        })
+        .then(todos =>{
+             res.json({todos: todos})
+        })
+    }
+    catch(e){
+        res.sendStatus(500);
+    }
+
 })
 
 router.post("/todo/newTodo", (req, res) => {
-    const {titleList} = req.body
-
-    if(!titleList) return res.status(400).json({message: "Title is required"})
+    const {todo} = req.body
+    
+    if (!todo) {
+        return res.status(400).json({ message: "Todo is required" });
+    }
+if(todo != undefined) {
     TodoList.create({
-        title: titleList,
-        slug: slugify(titleList).toLowerCase()
+        title: todo,
+        slug: slugify(todo).toLowerCase()
     }).then(() =>{
-        return res.json({title: titleList, slug: slugify(titleList).toLowerCase()})
+        
+        return res.json({title: todo, slug: slugify(todo).toLowerCase()}).status(201).send()
     } )
     .catch(err => {
         console.log(err);
         res.status(500).json({message: "Error creating todo"})
     })
+
+}
 })
+
 module.exports = router
